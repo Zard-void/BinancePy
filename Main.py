@@ -4,6 +4,8 @@ import time
 import requests
 import BinanceApi
 from BinanceApi import *
+import pymysql
+from UpdateDataBase import *
 import datetime
 import base64
 from hashlib import sha256
@@ -47,8 +49,16 @@ if __name__ == "__main__":
     # # response = requests.get(url="https://api.binance.com/api/v1/exchangeInfo")
     # print(response.text)
 
-    bApi = BinanceApi()
-    response = bApi.testConnectivity()
-    response = bApi.orderBook(symbol="BTCUSDT", limit="5")
-    print(response.text)
+    conn = pymysql.connect(host='localhost', user="root", passwd="123456", db="BINANCE")
+    cursor = conn.cursor()
+    print(cursor)
 
+    update = UpdateDataBase()
+    update.createTable()
+
+
+
+    # bApi = BinanceApi()
+    # response = bApi.testConnectivity()
+    # response = bApi.Kline(symbol="BTCUSDT", interval="1m", startTime="1503014400000", limit="1000")
+    # print(response.text)

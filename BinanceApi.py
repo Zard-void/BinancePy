@@ -27,12 +27,76 @@ class BinanceApi:
         response = requests.get(headers=header, url=httpUrl)
         return response
 
+    def depthInformation(self, **kwargs):
+        return self.orderBook(**kwargs)
+
     def orderBook(self, **kwargs):
         # kwargs["signature"] = self.getSignature()
         # kwargs["timestamp"] = self.__getTimeStamp()
         header = self.__header
         httpUrl = self.createUrl("orderBook", **kwargs)
         response = requests.get(headers=header, url=httpUrl)
+        return response
+
+    def recentTradesList(self, **kwargs):
+        header = self.__header
+        httpUrl = self.createUrl("recentTradesList", **kwargs)
+        response = requests.get(headers=header, url=httpUrl)
+        return response
+
+    def oldTradeLookup(self, **kwargs):
+        header = self.__header
+        httpUrl = self.createUrl("oldTradeLookup", **kwargs)
+        response = requests.get(headers=header, url=httpUrl)
+        return response
+
+    def compressed(self, **kwargs):
+        header = self.__header
+        httpUrl = self.createUrl("compressed", **kwargs)
+        response = requests.get(headers=header, url=httpUrl)
+        return response
+
+    def Kline(self, **kwargs):
+        header = self.__header
+        httpUrl = self.createUrl("Kline", **kwargs)
+        response = requests.get(headers=header, url=httpUrl)
+        return response
+
+    def currentAveragePrice(self, **kwargs):
+        header = self.__header
+        httpUrl = self.createUrl("Kline", **kwargs)
+        response = requests.get(headers=header, url=httpUrl)
+        return response
+
+    def get24hrTickerPriceChangeStatistics(self, **kwargs):
+        header = self.__header
+        httpUrl = self.createUrl("24hrTickerPriceChangeStatistics", **kwargs)
+        response = requests.get(headers=header, url=httpUrl)
+        return response
+
+    def symbolPriceTicker(self, **kwargs):
+        header = self.__header
+        httpUrl = self.createUrl("symbolPriceTicker", **kwargs)
+        response = requests.get(headers=header, url=httpUrl)
+        return response
+
+    def symbolOrderBookTicker(self, **kwargs):
+        header = self.__header
+        httpUrl = self.createUrl("symbolOrderBookTicker", **kwargs)
+        response = requests.get(headers=header, url=httpUrl)
+        return response
+
+    def testNewOrder(self, **kwargs):
+        self.__setTimeStamp()
+        kwargs["timestamp"] = self.__getTimeStamp()
+        kwargs["signature"] = self.getSignature()
+        header = self.__header
+        httpUrl = self.createUrl("testNewOrder", **kwargs)
+
+        print(self.getQueryString())
+        print(self.timeStamp)
+        print("1111111")
+        response = requests.post(headers=header, url=httpUrl)
         return response
 
     def createUrl(self, apiName, **kwargs):
@@ -80,11 +144,12 @@ class BinanceApi:
                 else:
                     self.queryString = self.queryString + "&" + argDictKey + "=" + argDictValue
 
-    @staticmethod
-    def __getTimeStamp():
+    def __setTimeStamp(self):
         t = time.time()
-        timeStamp = int(round(t * 1000))
-        return str(timeStamp)
+        self.timeStamp = int(round(t * 1000))
+
+    def __getTimeStamp(self):
+        return str(self.timeStamp)
 
     def __clearArgDict(self):
         self.__argDict["symbol"] = None
@@ -97,6 +162,8 @@ class BinanceApi:
         self.__argDict["limit"] = None
         self.__argDict["signature"] = None
         self.__argDict["timestamp"] = None
+        self.__argDict["interval"] = None
+        self.__argDict["startTime"] = None
 
     def __init__(self):
         # 初始化ApiKey和SecretKey
