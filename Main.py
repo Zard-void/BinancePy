@@ -6,6 +6,7 @@ import BinanceApi
 from BinanceApi import *
 import pymysql
 from UpdateDataBase import *
+import json
 import datetime
 import base64
 from hashlib import sha256
@@ -53,12 +54,16 @@ if __name__ == "__main__":
     cursor = conn.cursor()
     print(cursor)
 
+    # cursor.execute("SELECT * FROM btcusdt1day having id=max(id)")
+    # print(cursor.fetchone())
+
     update = UpdateDataBase()
-    update.createTable()
+    # update.createTable()
+    update.updateAllTable()
 
 
 
     # bApi = BinanceApi()
     # response = bApi.testConnectivity()
-    # response = bApi.Kline(symbol="BTCUSDT", interval="1m", startTime="1503014400000", limit="1000")
-    # print(response.text)
+    # response = bApi.Kline(symbol="BTCUSDT", interval="1m", startTime="1529244800000", limit="1")
+    # print(json.loads(response.text))
