@@ -11,19 +11,19 @@ class BinanceApi:
     """
     def testConnectivity(self):
         header = self.__header
-        httpUrl = self.createUrl("testConnectivity")
+        httpUrl = self.createUrl("testConnectivity", False)
         response = requests.get(headers=header, url=httpUrl)
         return response
 
     def checkServerTime(self):
         header = self.__header
-        httpUrl = self.createUrl("checkServerTime")
+        httpUrl = self.createUrl("checkServerTime", False)
         response = requests.get(headers=header, url=httpUrl)
         return response
 
     def exchangeInformation(self):
         header = self.__header
-        httpUrl = self.createUrl("exchangeInformation")
+        httpUrl = self.createUrl("exchangeInformation", False)
         response = requests.get(headers=header, url=httpUrl)
         return response
 
@@ -34,82 +34,93 @@ class BinanceApi:
         # kwargs["signature"] = self.getSignature()
         # kwargs["timestamp"] = self.__getTimeStamp()
         header = self.__header
-        httpUrl = self.createUrl("orderBook", **kwargs)
+        httpUrl = self.createUrl("orderBook", False, **kwargs)
         response = requests.get(headers=header, url=httpUrl)
         return response
 
     def recentTradesList(self, **kwargs):
         header = self.__header
-        httpUrl = self.createUrl("recentTradesList", **kwargs)
+        httpUrl = self.createUrl("recentTradesList", False, **kwargs)
         response = requests.get(headers=header, url=httpUrl)
         return response
 
     def oldTradeLookup(self, **kwargs):
         header = self.__header
-        httpUrl = self.createUrl("oldTradeLookup", **kwargs)
+        httpUrl = self.createUrl("oldTradeLookup", False, **kwargs)
         response = requests.get(headers=header, url=httpUrl)
         return response
 
     def compressed(self, **kwargs):
         header = self.__header
-        httpUrl = self.createUrl("compressed", **kwargs)
+        httpUrl = self.createUrl("compressed", False, **kwargs)
         response = requests.get(headers=header, url=httpUrl)
         return response
 
     def Kline(self, **kwargs):
         header = self.__header
-        httpUrl = self.createUrl("Kline", **kwargs)
+        httpUrl = self.createUrl("Kline", False, **kwargs)
         response = requests.get(headers=header, url=httpUrl)
         return response
 
     def currentAveragePrice(self, **kwargs):
         header = self.__header
-        httpUrl = self.createUrl("Kline", **kwargs)
+        httpUrl = self.createUrl("Kline", False, **kwargs)
         response = requests.get(headers=header, url=httpUrl)
         return response
 
     def get24hrTickerPriceChangeStatistics(self, **kwargs):
         header = self.__header
-        httpUrl = self.createUrl("24hrTickerPriceChangeStatistics", **kwargs)
+        httpUrl = self.createUrl("24hrTickerPriceChangeStatistics", False, **kwargs)
         response = requests.get(headers=header, url=httpUrl)
         return response
 
     def symbolPriceTicker(self, **kwargs):
         header = self.__header
-        httpUrl = self.createUrl("symbolPriceTicker", **kwargs)
+        httpUrl = self.createUrl("symbolPriceTicker", False, **kwargs)
         response = requests.get(headers=header, url=httpUrl)
         return response
 
     def symbolOrderBookTicker(self, **kwargs):
         header = self.__header
-        httpUrl = self.createUrl("symbolOrderBookTicker", **kwargs)
+        httpUrl = self.createUrl("symbolOrderBookTicker", False, **kwargs)
         response = requests.get(headers=header, url=httpUrl)
+        return response
+
+    def newOrder(self, **kwargs):
+        header = self.__header
+        httpUrl = self.createUrl("newOrder", True, **kwargs)
+        print("httpUrl:" + httpUrl)
+        response = requests.post(headers=header, url=httpUrl)
         return response
 
     def testNewOrder(self, **kwargs):
         self.__setTimeStamp()
         kwargs["timestamp"] = self.__getTimeStamp()
-        kwargs["signature"] = self.getSignature()
+        # kwargs["signature"] = self.getSignature()
         header = self.__header
-        httpUrl = self.createUrl("testNewOrder", **kwargs)
+        httpUrl = self.createUrl("testNewOrder", True, **kwargs)
 
-        print(self.getQueryString())
-        print(self.timeStamp)
-        print("1111111")
+        # print(self.getQueryString())
+        # print(self.timeStamp)
+        # print("1111111")
+        print(httpUrl)
         response = requests.post(headers=header, url=httpUrl)
         return response
 
-    def createUrl(self, apiName, **kwargs):
-        print(kwargs)
+    def createUrl(self, apiName, needSignature, **kwargs, ):
+        # print(kwargs)
         self.setQueryString(**kwargs)
         queryString = self.getQueryString()
         print(queryString)
         if apiName in self.__apiDict:
             if not bool(kwargs):
                 httpUrl = self.__binanceApiUrl + self.__apiDict[apiName]
-            else:
+            elif not needSignature:
                 httpUrl = self.__binanceApiUrl + self.__apiDict[apiName] + "?" + queryString
-            print(httpUrl)
+            else:
+                signature = self.getSignature()
+                httpUrl = self.__binanceApiUrl + self.__apiDict[apiName] + "?" + queryString + "&signature=" + signature
+            # print(httpUrl)
             return httpUrl
         else:
             raise Exception("Invalid API")
@@ -117,6 +128,7 @@ class BinanceApi:
     def getSignature(self):
         queryStringByte = str.encode(self.getQueryString())
         secretKeyByte = self.__secretKeyByte
+        print("queryString:" + self.queryString)
         signature = str(hmac.new(secretKeyByte, queryStringByte, hashlib.sha256).hexdigest())
         return signature
 

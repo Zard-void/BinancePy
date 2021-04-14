@@ -58,15 +58,16 @@ if __name__ == "__main__":
     # cursor.execute("SELECT * FROM btcusdt1day having id=max(id)")
     # print(cursor.fetchone())
 
-    update = UpdateDataBase()
+    # update = UpdateDataBase()
     # update.createTable()
     # update.updateTable("BNBUSDT15MIN")
     # update.updateAllTable()
 
-    policy = Policy()
-    policy.policy_01(1590429600, 1618396200)
+    # policy = Policy()
+    # policy.policy_01(1590429600, 1618396200)
 
-    # bApi = BinanceApi()
-    # response = bApi.testConnectivity()
-    # response = bApi.Kline(symbol="BTCUSDT", interval="1m", startTime="1529244800000", limit="1")
-    # print(json.loads(response.text))
+    bApi = BinanceApi()
+    response = bApi.testConnectivity()
+    # symbol = LTCBTC & type = LIMIT & side = BUY & timeInForce = GTC & quantity = 1 & price = 0.1 & recvWindow = 5000
+    response = bApi.testNewOrder(symbol="LTCBTC", type="LIMIT", side="BUY", timeInForce="GTC", quantity="1", price="0.1", recvWindow="5000")
+    print(json.loads(response.text))
