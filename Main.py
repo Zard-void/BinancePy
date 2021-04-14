@@ -6,6 +6,7 @@ import BinanceApi
 from BinanceApi import *
 import pymysql
 from UpdateDataBase import *
+from Policy import *
 import json
 import datetime
 import base64
@@ -59,9 +60,11 @@ if __name__ == "__main__":
 
     update = UpdateDataBase()
     # update.createTable()
-    update.updateAllTable()
+    # update.updateTable("BNBUSDT15MIN")
+    # update.updateAllTable()
 
-
+    policy = Policy()
+    policy.policy_01(1590429600, 1618396200)
 
     # bApi = BinanceApi()
     # response = bApi.testConnectivity()

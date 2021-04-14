@@ -4,18 +4,14 @@ import json
 
 #1503014400000 2017年8月18日早8点
 #1m, 3m, 5m, 15m, 30m, 1h, 2h, 4h, 6h, 8h, 12h, 1d, 3d, 1w, 1M
+
+
 class UpdateDataBase:
 
     def updateAllTable(self):
         for kLineEnum, suffix in self.__suffixMap.items():
             for prefix, prefix in self.__prefixMap.items():
                 self.updateTable(prefix + suffix)
-
-    def updateTable(self):
-        conn = pymysql.connect(host='localhost', user="root", passwd="123456", db="BINANCE")
-        # 获取游标
-        cursor = conn.cursor()
-
 
     def updateTable(self, tableName):
         if "BTCUSDT" in tableName:
