@@ -3,10 +3,17 @@ import json
 
 class Policy:
 
-    def policy_02(self, startTime, endTime):
-        prefix = "BNBUSDT"
+    def policy_02(self, startTime, endTime, prefix, tradeNum):
+        if prefix != "BTCUSDT" and prefix != "BNBUSDT" and prefix != "ETHUSDT":
+            print("交易错误")
+            return
         suffix = "15MIN"
-        coinKind = "BNB"
+        if "BNB" in prefix:
+            coinKind = "BNB"
+        elif "BTC" in prefix:
+            coinKind = "BTC"
+        elif "ETH" in prefix:
+            coinKind = "ETH"
         tableName = prefix + suffix
 
         conn = pymysql.connect(host='localhost', user="root", passwd="123456", db="BINANCE")
@@ -49,25 +56,26 @@ class Policy:
                 curBeginPrice = curKInfoList[0][5]
                 if preBeginPrice > preEndPrice:
                     if self.coinNum[coinKind] > 0:
-                        self.sell(curBeginPrice)
-                        self.sell(curBeginPrice)
+                        self.sell(coinKind, curBeginPrice, tradeNum)
+                        self.sell(coinKind, curBeginPrice, tradeNum)
                         print("Sell")
                     elif self.coinNum[coinKind] == 0:
-                        self.sell(curBeginPrice)
+                        self.sell(coinKind, curBeginPrice, tradeNum)
                         print("Sell")
                 else:
                     if self.coinNum[coinKind] == 0:
-                        self.buy(curBeginPrice)
+                        self.buy(coinKind, curBeginPrice, tradeNum)
                         print("Buy")
                     elif self.coinNum[coinKind] < 0:
-                        self.buy(curBeginPrice)
-                        self.buy(curBeginPrice)
+                        self.buy(coinKind, curBeginPrice, tradeNum)
+                        self.buy(coinKind, curBeginPrice, tradeNum)
                         print("Buy")
 
             else:
                 print("逻辑错误")
 
             curTotalPrice = self.coinNum[coinKind] * curBeginPrice + self.usableMoney[coinKind]
+            self.totalMoney[coinKind] = curTotalPrice
             print("持仓" + str(self.coinNum[coinKind]) + "开盘价格：" + str(curBeginPrice) + "可用资金：" + str(
                 self.usableMoney[coinKind]) + "当前总价值：" + str(curTotalPrice))
             curId = curId + 1
@@ -76,10 +84,17 @@ class Policy:
     '''
     前15分钟涨，买入，前15分钟跌，卖出
     '''
-    def policy_01(self, startTime, endTime):
-        prefix = "BNBUSDT"
+    def policy_01(self, startTime, endTime, prefix, tradeNum):
+        if prefix != "BTCUSDT" and prefix != "BNBUSDT" and prefix != "ETHUSDT":
+            print("交易错误")
+            return
         suffix = "15MIN"
-        coinKind = "BNB"
+        if "BNB" in prefix:
+            coinKind = "BNB"
+        elif "BTC" in prefix:
+            coinKind = "BTC"
+        elif "ETH" in prefix:
+            coinKind = "ETH"
         tableName = prefix + suffix
 
         conn = pymysql.connect(host='localhost', user="root", passwd="123456", db="BINANCE")
@@ -122,25 +137,24 @@ class Policy:
                 curBeginPrice = curKInfoList[0][5]
                 if preBeginPrice > preEndPrice:
                     if self.coinNum[coinKind] > 0:
-                        self.sell(curBeginPrice)
+                        self.sell(coinKind, curBeginPrice, tradeNum)
                         print("Sell")
                 else:
                     if self.coinNum[coinKind] == 0:
-                        self.buy(curBeginPrice)
+                        self.buy(coinKind, curBeginPrice, tradeNum)
                         print("Buy")
             else:
                 print("逻辑错误")
 
             curTotalPrice = self.coinNum[coinKind] * curBeginPrice + self.usableMoney[coinKind]
+            self.totalMoney[coinKind] = curTotalPrice
             print("持仓" + str(self.coinNum[coinKind]) + "开盘价格：" + str(curBeginPrice) + "可用资金：" + str(self.usableMoney[coinKind]) +"当前总价值：" + str(curTotalPrice))
             curId = curId + 1
             preId = preId + 1
 
 
 
-    def sell(self, currentPrice):
-        sellNum = 1
-        coinKind = "BNB"
+    def sell(self,coinKind, currentPrice, sellNum):
         coinNumAferTrade = self.coinNum[coinKind] - sellNum
         coinValueAfterTrade = coinNumAferTrade * currentPrice
         feesForTrade = self.fees[coinKind]  # 预留手续费算法
@@ -161,9 +175,7 @@ class Policy:
             self.totalMoney[coinKind] = self.coinValue[coinKind] + self.usableMoney[coinKind]
             return True
 
-    def buy(self, currentPrice):
-        buyNum = 1
-        coinKind = "BNB"
+    def buy(self,coinKind, currentPrice, buyNum):
         coinNumAferTrade = self.coinNum[coinKind] + buyNum
         coinValueAfterTrade = coinNumAferTrade * currentPrice
         feesForTrade = self.fees[coinKind]  # 预留手续费算法

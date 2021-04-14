@@ -63,11 +63,11 @@ if __name__ == "__main__":
     # update.updateTable("BNBUSDT15MIN")
     # update.updateAllTable()
 
-    # policy = Policy()
-    # policy.policy_01(1590429600, 1618396200)
+    policy = Policy()
+    policy.policy_02(1617467400, 1618367400, "BNBUSDT", 1)
 
-    bApi = BinanceApi()
-    response = bApi.testConnectivity()
-    # symbol = LTCBTC & type = LIMIT & side = BUY & timeInForce = GTC & quantity = 1 & price = 0.1 & recvWindow = 5000
-    response = bApi.testNewOrder(symbol="LTCBTC", type="LIMIT", side="BUY", timeInForce="GTC", quantity="1", price="0.1", recvWindow="5000")
-    print(json.loads(response.text))
+    # bApi = BinanceApi()
+    # response = bApi.testConnectivity()
+    # # symbol = LTCBTC & type = LIMIT & side = BUY & timeInForce = GTC & quantity = 1 & price = 0.1 & recvWindow = 5000
+    # response = bApi.testNewOrder(symbol="BTCUSDT", type="LIMIT", side="BUY", timeInForce="GTC", quantity="1", price="100000", recvWindow="5000")
+    # print(json.loads(response.text))
