@@ -9,18 +9,13 @@ import json
 class UpdateDataBase:
 
     def updateAllTable(self):
-        for kLineEnum, suffix in self.__suffixMap.items():
-            for prefix, prefix in self.__prefixMap.items():
+        for kLineEnum, suffix in self.suffixMap.items():
+            for prefix, prefix in self.prefixMap.items():
                 self.updateTable(prefix + suffix)
 
     def updateTable(self, tableName):
-        if "BTCUSDT" in tableName:
-            prefix = "BTCUSDT"
-        elif "BNBUSDT" in tableName:
-            prefix = "BNBUSDT"
-        elif "ETHUSDT" in tableName:
-            prefix = "ETHUSDT"
-        else:
+        prefix = self.getPrefix(tableName)
+        if prefix == "":
             print("数据库未建立")
             return
         conn = pymysql.connect(host='localhost', user="root", passwd="123456", db="BINANCE")
@@ -34,7 +29,7 @@ class UpdateDataBase:
             conn.close()
             return
         isDatabaseEmpty = cursor.fetchone() is None
-        for kLineEnum, suffix in self.__suffixMap.items():
+        for kLineEnum, suffix in self.suffixMap.items():
             if tableName == prefix + suffix:
                 if isDatabaseEmpty:
                     startTime = 1503014400
@@ -104,52 +99,93 @@ class UpdateDataBase:
         cursor.close()
         conn.close()
 
+    def getSuffix(self, tableName):
+        prefix = self.getPrefix(tableName)
+        if prefix != "":
+            for kLineEnum, suffix in self.suffixMap.items():
+                if prefix + suffix == tableName:
+                    return suffix
+        else:
+            print("无法获取后缀-前缀缺失")
+            return ""
+        print("无法获取后缀")
+        return ""
+
+    def getPrefix(self, tableName):
+        for prefix, prefix in self.prefixMap.items():
+            if prefix in tableName:
+                return prefix
+        print("无法获取前缀")
+        return ""
+
+    def isTableCreated(self, tableName):
+        conn = pymysql.connect(host='localhost', user="root", passwd="123456", db="BINANCE")
+        # 获取游标
+        cursor = conn.cursor()
+        sql = "show tables"
+        cursor.execute(sql)
+        tableList = cursor.fetchall()
+        for tableRecord in tableList:
+            for table in tableRecord:
+                if table.upper() == tableName.upper():
+                    cursor.close()
+                    conn.close()
+                    return True
+        cursor.close()
+        conn.close()
+        return False
+
     def createTable(self, prefix):
         conn = pymysql.connect(host='localhost', user="root", passwd="123456", db="BINANCE")
         # 获取游标
         cursor = conn.cursor()
 
-        for kLineEnum, suffix in self.__suffixMap.items():
+        for kLineEnum, suffix in self.suffixMap.items():
             tableName = "`" + prefix + suffix + "`"
             sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (\n"\
                 + "`id` int(11) NOT NULL AUTO_INCREMENT,\n"\
                 + "`date` varchar(100) NOT NULL,\n"\
                 + "`startTime` int(11) NOT NULL,\n"\
-                + "`highPrice` double(15,6) NOT NULL,\n"\
-                + "`lowPrice` double(15,6) NOT NULL,\n"\
-                + "`beginPrice` double(15,6) NOT NULL,\n"\
-                + "`endPrice` double(15,6) NOT NULL,\n"\
-                + "`quantity` double(15,6) NOT NULL,\n"\
+                + "`highPrice` double(25,6) NOT NULL,\n"\
+                + "`lowPrice` double(25,6) NOT NULL,\n"\
+                + "`beginPrice` double(25,6) NOT NULL,\n"\
+                + "`endPrice` double(25,6) NOT NULL,\n"\
+                + "`quantity` double(25,6) NOT NULL,\n"\
                 + "PRIMARY KEY (`id`)"\
                 + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0"
             cursor.execute(sql)
         cursor.close()  # 先关闭游标
         conn.close()  # 再关闭数据库连接
 
+    # def initCoinKindMap(self):
+
+
     def initSuffixMap(self):
-        self.__suffixMap = {}
-        self.__suffixMap["1m"] = "1MIN"
-        self.__suffixMap["3m"] = "3MIN"
-        self.__suffixMap["5m"] = "5MIN"
-        self.__suffixMap["15m"] = "15MIN"
-        self.__suffixMap["30m"] = "30MIN"
-        self.__suffixMap["1h"] = "1HOUR"
-        self.__suffixMap["2h"] = "2HOUR"
-        self.__suffixMap["4h"] = "4HOUR"
-        self.__suffixMap["6h"] = "6HOUR"
-        self.__suffixMap["8h"] = "8HOUR"
-        self.__suffixMap["12h"] = "12HOUR"
-        self.__suffixMap["1d"] = "1DAY"
-        self.__suffixMap["3d"] = "3DAY"
-        self.__suffixMap["1w"] = "1WEK"
-        self.__suffixMap["1M"] = "1MON"
+        self.suffixMap = {}
+        self.suffixMap["1m"] = "1MIN"
+        self.suffixMap["3m"] = "3MIN"
+        self.suffixMap["5m"] = "5MIN"
+        self.suffixMap["15m"] = "15MIN"
+        self.suffixMap["30m"] = "30MIN"
+        self.suffixMap["1h"] = "1HOUR"
+        self.suffixMap["2h"] = "2HOUR"
+        self.suffixMap["4h"] = "4HOUR"
+        self.suffixMap["6h"] = "6HOUR"
+        self.suffixMap["8h"] = "8HOUR"
+        self.suffixMap["12h"] = "12HOUR"
+        self.suffixMap["1d"] = "1DAY"
+        self.suffixMap["3d"] = "3DAY"
+        self.suffixMap["1w"] = "1WEK"
+        self.suffixMap["1M"] = "1MON"
         pass
 
     def initPrefixMap(self):
-        self.__prefixMap = {}
-        self.__prefixMap["BTCUSDT"] = "BTCUSDT"
-        self.__prefixMap["BNBUSDT"] = "BNBUSDT"
-        self.__prefixMap["ETHUSDT"] = "ETHUSDT"
+        self.prefixMap = {}
+        self.prefixMap["BTCUSDT"] = "BTCUSDT"
+        self.prefixMap["BNBUSDT"] = "BNBUSDT"
+        self.prefixMap["ETHUSDT"] = "ETHUSDT"
+        self.prefixMap["AKROUSDT"] = "AKROUSDT"
+        self.prefixMap["BTTUSDT"] = "BTTUSDT"
 
     def __init__(self):
         self.initSuffixMap()

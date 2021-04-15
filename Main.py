@@ -55,16 +55,17 @@ if __name__ == "__main__":
     cursor = conn.cursor()
     print(cursor)
 
-    # cursor.execute("SELECT * FROM btcusdt1day having id=max(id)")
-    # print(cursor.fetchone())
+    # cursor.execute("show tables")
+    # print(cursor.fetchall())
 
-    # update = UpdateDataBase()
-    # update.createTable()
-    # update.updateTable("BNBUSDT15MIN")
+    update = UpdateDataBase()
+    print(update.isTableCreated("BTTUSDT15MIN"))
+    update.createTable("BTTUSDT")
+    update.updateTable("BTTUSDT15MIN")
     # update.updateAllTable()
 
     policy = Policy()
-    policy.policy_02(1617467400, 1618367400, "BNBUSDT", 1)
+    policy.policy_03(1613088000, 1614384000, "AKROUSDT")
 
     # bApi = BinanceApi()
     # response = bApi.testConnectivity()
