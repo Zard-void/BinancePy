@@ -255,8 +255,8 @@ class Policy:
         print("coinKind:" + coinKind)
         self.coinNum[coinKind] = 0
         self.coinValue[coinKind] = 0
-        self.usableMoney[coinKind] = 1000
-        self.totalMoney[coinKind] = 1000
+        self.usableMoney[coinKind] = 60000000
+        self.totalMoney[coinKind] = 60000000
         self.fees[coinKind] = 0
 
     def __init__(self):

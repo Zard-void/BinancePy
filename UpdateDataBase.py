@@ -135,25 +135,26 @@ class UpdateDataBase:
         conn.close()
         return False
 
-    def createTable(self, prefix):
+    def createTable(self):
         conn = pymysql.connect(host='localhost', user="root", passwd="123456", db="BINANCE")
         # 获取游标
         cursor = conn.cursor()
 
         for kLineEnum, suffix in self.suffixMap.items():
-            tableName = "`" + prefix + suffix + "`"
-            sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (\n"\
-                + "`id` int(11) NOT NULL AUTO_INCREMENT,\n"\
-                + "`date` varchar(100) NOT NULL,\n"\
-                + "`startTime` int(11) NOT NULL,\n"\
-                + "`highPrice` double(25,6) NOT NULL,\n"\
-                + "`lowPrice` double(25,6) NOT NULL,\n"\
-                + "`beginPrice` double(25,6) NOT NULL,\n"\
-                + "`endPrice` double(25,6) NOT NULL,\n"\
-                + "`quantity` double(25,6) NOT NULL,\n"\
-                + "PRIMARY KEY (`id`)"\
-                + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0"
-            cursor.execute(sql)
+            for prefix, prefix in self.prefixMap.items():
+                tableName = "`" + prefix + suffix + "`"
+                sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (\n"\
+                    + "`id` int(11) NOT NULL AUTO_INCREMENT,\n"\
+                    + "`date` varchar(100) NOT NULL,\n"\
+                    + "`startTime` int(11) NOT NULL,\n"\
+                    + "`highPrice` double(25,6) NOT NULL,\n"\
+                    + "`lowPrice` double(25,6) NOT NULL,\n"\
+                    + "`beginPrice` double(25,6) NOT NULL,\n"\
+                    + "`endPrice` double(25,6) NOT NULL,\n"\
+                    + "`quantity` double(25,6) NOT NULL,\n"\
+                    + "PRIMARY KEY (`id`)"\
+                    + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=0"
+                cursor.execute(sql)
         cursor.close()  # 先关闭游标
         conn.close()  # 再关闭数据库连接
 
@@ -190,7 +191,5 @@ class UpdateDataBase:
     def __init__(self):
         self.initSuffixMap()
         self.initPrefixMap()
-        self.createTable("BTCUSDT")
-        self.createTable("BNBUSDT")
-        self.createTable("ETHUSDT")
+        self.createTable()
         pass

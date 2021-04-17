@@ -107,6 +107,15 @@ class BinanceApi:
         response = requests.post(headers=header, url=httpUrl)
         return response
 
+    def accountInformation(self, **kwargs):
+        self.__setTimeStamp()
+        kwargs["timestamp"] = self.__getTimeStamp()
+        header = self.__header
+        httpUrl = self.createUrl("accountInformation", True, **kwargs)
+        print(httpUrl)
+        response = requests.get(headers=header, url=httpUrl)
+        return response
+    ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
     def createUrl(self, apiName, needSignature, **kwargs, ):
         # print(kwargs)
         self.setQueryString(**kwargs)
