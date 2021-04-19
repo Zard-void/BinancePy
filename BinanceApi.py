@@ -87,6 +87,8 @@ class BinanceApi:
         return response
 
     def newOrder(self, **kwargs):
+        self.__setTimeStamp()
+        kwargs["timestamp"] = self.__getTimeStamp()
         header = self.__header
         httpUrl = self.createUrl("newOrder", True, **kwargs)
         print("httpUrl:" + httpUrl)
@@ -120,7 +122,7 @@ class BinanceApi:
         # print(kwargs)
         self.setQueryString(**kwargs)
         queryString = self.getQueryString()
-        print(queryString)
+        # print(queryString)
         if apiName in self.__apiDict:
             if not bool(kwargs):
                 httpUrl = self.__binanceApiUrl + self.__apiDict[apiName]

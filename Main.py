@@ -12,6 +12,7 @@ from Trade import *
 import datetime
 import base64
 from hashlib import sha256
+import threading
 
 if __name__ == "__main__":
     """
@@ -65,26 +66,36 @@ if __name__ == "__main__":
     # update.updateTable("BTCUSDT15MIN")
     # update.updateAllTable()
 
-    policy = Policy()
+    # policy = Policy()
     # policy.policy_03(1613088000, 1614384000, "BTCUSDT")
 
     bApi = BinanceApi()
     response = bApi.testConnectivity()
     # symbol = LTCBTC & type = LIMIT & side = BUY & timeInForce = GTC & quantity = 1 & price = 0.1 & recvWindow = 5000
-    response = bApi.testNewOrder(symbol="BTCUSDT", type="LIMIT", side="BUY", timeInForce="GTC", quantity="1", price="100000", recvWindow="5000")
-    response = bApi.accountInformation(recvWindow="5000")
-    # print(response)
-    infoList = json.loads(response.text)
+    response = bApi.testNewOrder(symbol="BTCUSDT", type="MARKET", side="BUY", quantity="0.0002", recvWindow="5000")
+    # response = bApi.accountInformation(recvWindow="5000")
+    print(json.loads(response.text))
+    # infoList = json.loads(response.text)
     # print(infoList[1])
-    for key in infoList:
-        print(key)
-        print(infoList[key])
-        print("----")
-    print(len(json.loads(response.text)["balances"]))
+    # for key in infoList:
+    #     print(key)
+    #     print(infoList[key])
+    #     print("----")
+    # print(len(json.loads(response.text)["balances"]))
     # print(len(json.loads(response.text)))
 
     trade = Trade()
-    print(trade.getLatest15Min())
+
+    # curTradeTime = trade.getLatest15Min(time.time())
+    # print(curTradeTime)
+
+    # response = bApi.Kline(symbol="BNBUSDT", interval="15m", startTime=str(1618805700) + "000", limit="2")
+    # kLineInfoList = json.loads(response.text)
+    # print(response)
+    # print(json.loads(response.text))
+
+    while(1):
+        trade.tradeAsPolicy03("BNB", 20, 0)
     # print(trade.tradeAsPolicy03("BNB", 10))
 
 
